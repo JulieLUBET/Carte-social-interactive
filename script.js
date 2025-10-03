@@ -1,57 +1,165 @@
-//alert('JS connecté !');
+// --- Initialisation de la carte centrée sur Paris ---
+var map = L.map('maMap').setView([48.8566, 2.3522], 13);
 
-// Initialise la carte centrée sur des coordonnées précises
-var map = L.map('maMap').setView([48.8566,2.3522], 13);
-// Ajoute une couche de tuiles OpenStreetMap à la carte
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+// Ajoute la couche OpenStreetMap
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
-// Ajoute un marqueur à la carte
-var marker = L.marker([48.8566,2.3522]).addTo(map)
-// Ajoute une popup au marqueur
-marker.bindPopup("<b>Bonjour Paris!</b>").openPopup();
+// --- Données des brocantes avec catégories ---
+const brocantes = [
+  {
+    nom: "Marché aux Puces de Saint-Ouen (Porte de Clignancourt)",
+    coords: [48.9022, 2.3445],
+    categorie: "Marché aux Puces"
+  },
+  {
+    nom: "Marché aux Puces de la Porte de Vanves",
+    coords: [48.8266, 2.3136],
+    categorie: "Marché aux Puces"
+  },
+  {
+    nom: "Marché aux Puces de Montreuil",
+    coords: [48.8631, 2.4196],
+    categorie: "Marché aux Puces"
+  },
+  {
+    nom: "Marché d'Aligre",
+    coords: [48.8492, 2.3808],
+    categorie: "Marché Alimentaire"
+  },
+  {
+    nom: "Brocante de la Place de la République",
+    coords: [48.8670, 2.3630],
+    categorie: "Brocante"
+  }
+];
 
-// Affiche un cercle sur la carte
-var circle = L.circle([48.85,2.34], {
-    color: 'red',
-    fillColor: '#f03',
-    fillOpacity: 0.5,
-    radius: 500
-}).addTo(map);
+// --- Affichage des marqueurs et du polygone ---
+let marqueursBrocantes = [];
 
-// Ajoute une polygon sur la carte
-var polygon = L.polygon([
-    [48.823,2.35],
-    [48.85,2.38],
-    [48.85,2.34]
-]).addTo(map);
+// Affiche les marqueurs selon la catégorie sélectionnée
+function afficherMarqueurs(categorie) {
+  marqueursBrocantes.forEach(m => map.removeLayer(m));
+  marqueursBrocantes = [];
+  const brocantesFiltrees = categorie === "toutes"
+    ? brocantes
+    : brocantes.filter(b => b.categorie === categorie);
 
-// Ajoute une popup au marqueur pour afficher un message lors du clic
-/*function onMapCLick(event) {
-    alert("Vous avez cliqué sur la carte aux coordonnées" + event.latlng);
+  brocantesFiltrees.forEach(brocante => {
+    const marker = L.marker(brocante.coords).addTo(map)
+      .bindPopup(`<b>${brocante.nom}</b>`);
+    marqueursBrocantes.push(marker);
+  });
+
+  // Met à jour la liste dans le panneau latéral
+  const liste = document.getElementById('liste-brocantes');
+  liste.innerHTML = '';
+  brocantesFiltrees.forEach((b, i) => {
+    const li = document.createElement('li');
+    li.textContent = b.nom;
+    li.onclick = () => {
+      map.setView(b.coords, 15);
+      marqueursBrocantes[i].openPopup();
+    };
+    liste.appendChild(li);
+  });
 }
-map.on('click', onMapCLick);*/
 
-// Ajoute une popup au marqueur pour afficher un message lors du clic
-let popup = L.popup();
-function onMapClick(event) {
-    popup
-        .setLatLng(event.latlng)
-        .setContent("Vous avez cliqué sur la carte aux coordonnées " + event.latlng.toString())
-        .openOn(map);
-}
-map.on('click', onMapClick);
+// --- Polygone reliant les brocantes principales ---
+const pointsPolygone = brocantes.map(b => b.coords);
+L.polygon(pointsPolygone, {
+  color: 'blue',
+  fillColor: '#6366f1',
+  fillOpacity: 0.08
+}).addTo(map).bindPopup("Zone principale des brocantes à Paris");
 
-// Personnaliser un marqueur
-let customIcon = L.icon({
-    iconUrl: '/images/makima.png',
-    iconSize: [40, 60], // taille de l'icône
-    iconAnchor: [20, 40], // point de l'icône qui correspondra à la position du marqueur
-    popupAnchor: [0, -40] // point depuis lequel la popup doit s'ouvrir par rapport à l'icône
+// --- Filtres : gestion du menu déroulant ---
+document.getElementById('filtre-categorie').onchange = function() {
+  afficherMarqueurs(this.value);
+};
+afficherMarqueurs("toutes");
+
+// --- Ajout d'un seul marqueur manuel (noir) ---
+let ajoutMarqueurActif = false;
+let nomMarqueur = "";
+let marqueurManuel = null;
+
+// Icône noire classique pour le marqueur manuel
+const iconNoir = L.icon({
+  iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-black.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
 });
-L.marker([48.86, 2.29], {icon: customIcon})
-.addTo(map)
-.bindPopup("Un marqueur personnalisé avec une image !")
-.openPopup;
+
+document.getElementById('btn-add-marker').onclick = function() {
+  const nom = prompt("Entrez le nom du marqueur :");
+  if (nom && nom.trim() !== "") {
+    nomMarqueur = nom.trim();
+    ajoutMarqueurActif = true;
+    this.textContent = "Cliquez sur la carte pour placer le marqueur";
+    this.disabled = true;
+  } else {
+    alert("Nom du marqueur obligatoire !");
+  }
+};
+
+map.on('click', function(e) {
+  if (ajoutMarqueurActif) {
+    var lat = e.latlng.lat.toFixed(5);
+    var lng = e.latlng.lng.toFixed(5);
+    if (marqueurManuel) {
+      map.removeLayer(marqueurManuel);
+    }
+    marqueurManuel = L.marker([lat, lng], { icon: iconNoir }).addTo(map)
+      .bindPopup(
+        `<div class="popup-marqueur">
+          <div class="popup-titre">${nomMarqueur}</div>
+          <div class="popup-coord">
+            <span>Latitude :</span> ${lat}<br>
+            <span>Longitude :</span> ${lng}
+          </div>
+        </div>`,
+        { className: 'popup-marqueur-wrapper' }
+      )
+      .openPopup();
+    ajoutMarqueurActif = false;
+    nomMarqueur = "";
+    const btn = document.getElementById('btn-add-marker');
+    btn.textContent = "Ajouter un marqueur";
+    btn.disabled = false;
+  }
+});
+
+// --- Bouton de géolocalisation ---
+document.getElementById('btn-geoloc').onclick = function() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var lat = position.coords.latitude;
+      var lng = position.coords.longitude;
+      map.setView([lat, lng], 14);
+      L.circle([lat, lng], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.5,
+        radius: 100
+      }).addTo(map).bindPopup("Vous êtes ici !").openPopup();
+    }, function() {
+      alert("Impossible d'obtenir votre position.");
+    });
+  } else {
+    alert("La géolocalisation n'est pas supportée par ce navigateur.");
+  }
+};
+
+// --- Barre de navigation : effet actif ---
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.onclick = function() {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    // Ici tu pourrais afficher/masquer des sections selon le bouton si tu veux aller plus loin
+  };
+});

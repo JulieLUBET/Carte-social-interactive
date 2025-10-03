@@ -1,42 +1,142 @@
+/* Fond général et police */
 body {
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(135deg, #e0e7ff 0%, #f8fafc 100%);
-    font-family: 'Segoe UI', Arial, sans-serif;
-    min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e0e7ff 100%);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  min-height: 100vh;
 }
 
+/* Conteneur principal */
 .app-container {
-  max-width: 480px;
-  margin: 40px auto;
+  max-width: 900px;
+  margin: 40px auto 0 auto;
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(60, 60, 120, 0.12);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-height: 90vh;
+  position: relative;
 }
 
+/* Barre de navigation (mobile: bas, ordi: haut) */
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 60px;
+  background: #fff;
+  border-top: 1.5px solid #e5e7eb;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 1000;
+  box-shadow: 0 -2px 8px rgba(60,60,120,0.06);
+}
+.nav-btn {
+  background: none;
+  border: none;
+  outline: none;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.3em;
+  color: #6366f1;
+  padding: 6px 0 0 0;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-btn.active, .nav-btn:active {
+  color: #fff;
+  background: #6366f1;
+  border-radius: 12px 12px 0 0;
+}
+.nav-label {
+  font-size: 0.75em;
+  margin-top: 2px;
+}
+
+/* En-tête */
 .app-header {
   background: #6366f1;
   color: #fff;
-  padding: 24px 0 16px 0;
+  padding: 24px 0 10px 0;
   text-align: center;
   box-shadow: 0 2px 8px rgba(60, 60, 120, 0.08);
 }
-
 .app-header h1 {
   margin: 0;
   font-size: 1.6rem;
   letter-spacing: 1px;
 }
+.slogan {
+  margin: 0;
+  font-size: 1.05em;
+  font-weight: 400;
+  opacity: 0.85;
+}
 
+/* Disposition principale */
 .app-main {
+  display: flex;
+  gap: 18px;
   padding: 24px;
   background: #f1f5f9;
   flex: 1;
 }
 
+/* Panneau latéral */
+.sidebar {
+  width: 200px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(60,60,120,0.08);
+  padding: 14px 10px;
+  font-size: 0.98em;
+  color: #222;
+  min-width: 150px;
+  margin-right: 10px;
+}
+.sidebar h2 {
+  font-size: 1.08em;
+  margin: 8px 0 6px 0;
+  color: #6366f1;
+}
+#filtre-categorie {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+#liste-brocantes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#liste-brocantes li {
+  margin-bottom: 8px;
+  cursor: pointer;
+  color: #2563eb;
+  transition: color 0.2s;
+}
+#liste-brocantes li:hover {
+  color: #6366f1;
+  text-decoration: underline;
+}
+
+/* Zone principale */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Carte */
 .carte-app {
   width: 100%;
   height: 350px;
@@ -44,4 +144,127 @@ body {
   box-shadow: 0 2px 8px rgba(60, 60, 120, 0.10);
   border: 1px solid #e5e7eb;
   overflow: hidden;
+  margin-bottom: 18px;
+}
+
+/* Boutons */
+.actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+.btn-main {
+  padding: 10px 18px;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(60,60,120,0.08);
+  transition: background 0.2s;
+}
+.btn-main:hover {
+  background: #4f46e5;
+}
+.astuce {
+  text-align: center;
+  color: #6366f1;
+  font-size: 0.98em;
+  margin-top: 0;
+  opacity: 0.8;
+}
+
+/* Popup personnalisé */
+.popup-marqueur-wrapper .popup-marqueur {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  min-width: 180px;
+  padding: 6px 2px;
+}
+.popup-titre {
+  font-size: 1.15em;
+  font-weight: bold;
+  color: #6366f1;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+.popup-coord {
+  font-size: 0.98em;
+  color: #333;
+}
+.popup-coord span {
+  font-weight: bold;
+  color: #6366f1;
+}
+
+/* Responsive mobile */
+@media (max-width: 800px) {
+  .app-container {
+    max-width: 100vw;
+    border-radius: 0;
+    margin: 0;
+    min-height: 100vh;
+  }
+  .app-main {
+    flex-direction: column;
+    gap: 0;
+    padding: 12px;
+  }
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    margin: 0 0 12px 0;
+    box-shadow: none;
+    border-radius: 8px;
+  }
+  .main-content {
+    width: 100%;
+  }
+  .carte-app {
+    height: 300px;
+  }
+  .bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    flex-direction: row;
+    height: 56px;
+    font-size: 1.1em;
+    border-top: 1.5px solid #e5e7eb;
+    border-bottom: none;
+    box-shadow: 0 -2px 8px rgba(60,60,120,0.06);
+  }
+  body {
+    padding-bottom: 60px;
+  }
+}
+
+/* Barre de navigation en haut sur ordinateur */
+@media (min-width: 801px) {
+  .bottom-nav {
+    position: static;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    height: 60px;
+    flex-direction: row;
+    border-bottom: 1.5px solid #e5e7eb;
+    border-top: none;
+    box-shadow: 0 2px 8px rgba(60,60,120,0.06);
+    margin-bottom: 0;
+    z-index: 100;
+  }
+  .app-container {
+    padding-bottom: 0;
+  }
+  body {
+    padding-bottom: 0;
+  }
+  .nav-btn.active, .nav-btn:active {
+    border-radius: 0 0 12px 12px;
+  }
 }
