@@ -10,14 +10,16 @@
      crossorigin=""/>
 </head>
 <body>
-    <h1>Bienvenue dans mon projet HTML et CSS</h1>
-    <p>Ceci est la page principale de mon projet.</p>
+    <header class="app-header">
+        <h1>Bienvenue dans mon projet HTML et CSS</h1>
+        <p>Ceci est la page principale de mon projet.</p>
+    </header>
 
-    <div class="carte">
+    <main class="app-main">
         <h2>Ma Carte</h2>
         <p>Contenu de la carte.</p>
-        <div id="map"></div>
-    </div>
+        <div class="carte-app" id="maMap"></div>
+    </main>
 
     <!-- javascripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

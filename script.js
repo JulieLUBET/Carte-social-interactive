@@ -1,7 +1,7 @@
 //alert('JS connecté !');
 
 // Initialise la carte centrée sur des coordonnées précises
-var map = L.map('map').setView([48.8566,2.3522], 13);
+var map = L.map('maMap').setView([48.8566,2.3522], 13);
 // Ajoute une couche de tuiles OpenStreetMap à la carte
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
